@@ -19,6 +19,7 @@ let blurKernel;
 let blurMult;
 
 function thresholdFilter(pixels, level) {
+
     if (level === undefined) {
         level = 0.5;
     }

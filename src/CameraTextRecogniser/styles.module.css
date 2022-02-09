@@ -1,0 +1,58 @@
+.wrapper{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+.cameraStyle{
+    height: 100vw;
+    width: 100vw;
+}
+.canvas{
+    height: 100vw;
+    width: 100vw;
+    display: none;
+}
+.canvasCropped{
+    height: 100vw;
+    width: 100vw;
+}
+.cameraWrapper{
+    position: relative;
+    display: flex;
+    justify-content: center;
+    width: 100vw;
+    height: 100vw;
+}
+.imageWrapper{
+    display: none;
+}
+.areaWrapper{
+    z-index: 2;
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100vw;
+    height: 100vw;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.area{
+    border: 3px solid green;
+    width: 50vw;
+    height: 50vw;
+
+}
+@media (min-width: 400px){
+    .wrapper{
+        flex-direction: column;
+    }
+    .cameraStyle{
+        height: 200px;
+    }
+    .canvas{
+        height: 100vw;
+        width: 100vw;
+    }
+}
