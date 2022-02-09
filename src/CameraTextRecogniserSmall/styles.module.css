@@ -20,7 +20,8 @@
     align-items: center;
     overflow: hidden;
     width: 100vw;
-    height: 100vw;
+    height: 50vw;
+    padding: 20px 0px;
 }
 .canvasCropped{
     flex-shrink: 0;
@@ -49,10 +50,12 @@
     justify-content: center;
 }
 .area{
-    border: 15vw solid rgba(0,255,0,0.5) ;
+    border: 15vw solid rgba(0,255,255,0.5) ;
+    border-top-width: 25vw;
+    border-bottom-width: 25vw;
 
     width: 50vw;
-    height: 50vw;
+    height: 15vw;
 
 }
 @media (min-width: 400px){

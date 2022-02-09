@@ -3,7 +3,7 @@ import Webcam from "react-webcam";
 import React, {useRef, useState, useCallback, createRef, useEffect} from 'react';
 import { createWorker } from 'tesseract.js';
 import preprocessImage from './preprocessImage';
-import CameraTextRecogniser from "./CameraTextRecogniser/CameraTextRecogniserComponent";
+import CameraTextRecogniserSmall from "./CameraTextRecogniserSmall/CameraTextRecogniserSmallComponent";
 
 
 function App() {
@@ -11,7 +11,7 @@ function App() {
 
   return (
     <div className="App">
-        <CameraTextRecogniser/>
+        <CameraTextRecogniserSmall/>
     </div>
   );
 }
