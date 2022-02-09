@@ -4,7 +4,7 @@ import {createWorker} from "tesseract.js";
 import preprocessImage from "../preprocessImage";
 import Webcam from "react-webcam";
 const CameraTextRecogniser = () =>{
-    const {wrapper, canvas: canvasStyle,canvasCropped:canvasCroppedStyle,cameraWrapper, areaWrapper,area, imageWrapper} = styles;
+    const {wrapper, canvas: canvasStyle,canvasCroppedWrapper, canvasCropped:canvasCroppedStyle,cameraWrapper, areaWrapper,area, imageWrapper} = styles;
     const { innerWidth: windWidth, innerHeight: windHeight } = window;
     const webcamRef = useRef(null);
     const [imgSrc, setImgSrc] = useState();
@@ -21,7 +21,7 @@ const CameraTextRecogniser = () =>{
     }
 
     const worker = createWorker({
-        logger: m => console.log(m)
+        // logger: m => console.log(m)
     });
 
     const videoConstraints = {
@@ -30,51 +30,56 @@ const CameraTextRecogniser = () =>{
     };
     const capture = React.useCallback(
         () => {
-            const imageSrc = webcamRef.current.getScreenshot();
-            setImgSrc(imageSrc);
+            setImgSrc(webcamRef.current.getScreenshot());
         },
         [webcamRef]
     );
 
     useEffect(()=> recognizeText(imgSrc, level), [imgSrc, level]);
 
-    const recognizeText = (imgSrc, level) =>{
-        const canvas = canvasRef.current;
-        const ctx = canvas.getContext('2d');
-        canvas.height = windWidth;
-        canvas.width = windWidth;
-        ctx.drawImage(imageRef.current, 0, 0);
-        ctx.putImageData(preprocessImage(canvas, level),0,0);
-        const dataUrl = canvas.toDataURL("image/jpeg")
+    const recognizeText = (imgSrc, level) => {
 
-        var imageObj = canvasRef.current;
-        const canvas2 = canvasCroppedRef.current;
-        var context2 = canvas2.getContext('2d');
+        if (imgSrc) {
 
-        var sourceX = canvas.width*0.25;
-        var sourceY = canvas.height*0.15;
-        var sourceWidth = canvas.width*0.5 ;
-        var sourceHeight = canvas.height ;
-        var destWidth = sourceWidth;
-        var destHeight = 300;
-        var destX = 0;
-        var destY = 0;
-        context2.drawImage(imageObj, sourceX, sourceY, sourceWidth, sourceHeight, destX, destY, destWidth, destHeight);
-        // context2.putImageData(preprocessImage(canvas2, level),0,0);
-        const dataUrl2 = canvas2.toDataURL("image/jpeg")
+            const canvas = canvasRef.current;
+            const ctx = canvas.getContext('2d');
+            canvas.height = imageRef.current.height;
+            canvas.width = imageRef.current.width;
+            ctx.drawImage(imageRef.current, 0, 0);
+            ctx.putImageData(preprocessImage(canvas, level), 0, 0);
+            // const dataUrl = canvas.toDataURL("image/jpeg")
+            //
+            // var imageObj = canvasRef.current;
+            const canvasCropped = canvasCroppedRef.current;
+            const ctxCropped = canvasCropped.getContext('2d');
+            console.log(canvas.width);
+            console.log(canvas.height);
+
+            const sourceX = canvas.width * 0.3;
+            const sourceY = canvas.height * 0.3;
+            const sourceWidth = canvas.width * 0.4;
+            const sourceHeight = canvas.height * 0.4;
+            const destWidth = windWidth;
+            const destHeight = windWidth;
+            const destX = 0;
+            const destY = 0;
+            ctxCropped.drawImage(canvasRef.current, sourceX, sourceY, sourceWidth, sourceHeight, destX, destY, destWidth, destHeight);
+            // ctxCropped.putImageData(preprocessImage(canvasCropped, level),0,0);
+            const dataUrl = canvasCropped.toDataURL("image/jpeg")
 
 
-        if(imgSrc) {
-            (async () => {
-                await worker.load();
-                await worker.loadLanguage('eng');
-                await worker.initialize('eng');
-                // const { data: { text } } = await worker.recognize(imgSrc);
-                const { data: { text } } = await worker.recognize(dataUrl2);
-                console.log(text);
-                setText(text);
-                await worker.terminate();
-            })();
+            if (dataUrl) {
+                (async () => {
+                    await worker.load();
+                    await worker.loadLanguage('eng');
+                    await worker.initialize('eng');
+                    // const { data: { text } } = await worker.recognize(imgSrc);
+                    const {data: {text}} = await worker.recognize(dataUrl);
+                    console.log(text);
+                    setText(text);
+                    await worker.terminate();
+                })();
+            }
         }
     }
     const switchCameraFacingMode = (facingMode) =>{
@@ -115,17 +120,19 @@ const CameraTextRecogniser = () =>{
                 <img style={{height:'40vh'}} alt="captured" src={imgSrc} ref={imageRef}/>
             </div>
 
-            <h3>Canvas</h3>
             <canvas
                 ref={canvasRef}
-                // style={cameraStyle}
                 className={canvasStyle}
             ></canvas>
+            <div className={canvasCroppedWrapper}>
             <canvas
-                ref={canvasCroppedRef }
+                width={windWidth}
+                height={windWidth}
+                ref={canvasCroppedRef}
                 // style={cameraStyle}
-                // className={canvasCroppedStyle}
+                className={canvasCroppedStyle}
             ></canvas>
+            </div>
             <p>{text}</p>
             <input type={"number"} value={level} onChange={(event)=>{setLevel(event.target.value)}}/>
 

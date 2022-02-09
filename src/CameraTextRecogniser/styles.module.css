@@ -5,17 +5,27 @@
     align-items: center;
 }
 .cameraStyle{
-    height: 100vw;
     width: 100vw;
+    height: 200px;
+
 }
 .canvas{
-    height: 100vw;
+    height: auto;
     width: 100vw;
     display: none;
 }
-.canvasCropped{
-    height: 100vw;
+.canvasCroppedWrapper{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
     width: 100vw;
+    height: 100vw;
+}
+.canvasCropped{
+    flex-shrink: 0;
+    /*width: 150px;*/
+
 }
 .cameraWrapper{
     position: relative;
@@ -46,13 +56,9 @@
 }
 @media (min-width: 400px){
     .wrapper{
-        flex-direction: column;
     }
     .cameraStyle{
-        height: 200px;
     }
     .canvas{
-        height: 100vw;
-        width: 100vw;
     }
 }
