@@ -51,11 +51,11 @@
 }
 .area{
     border: 15vw solid rgba(0,255,255,0.5) ;
-    border-top-width: 25vw;
-    border-bottom-width: 25vw;
+    border-top-width: 35vw;
+    border-bottom-width: 35vw;
 
     width: 50vw;
-    height: 15vw;
+    height: 10vw;
 
 }
 @media (min-width: 400px){

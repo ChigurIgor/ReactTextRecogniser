@@ -1,17 +1,18 @@
 function preprocessImage(canvas, level) {
-    // const level = 0.1;
-    // const radius = 1;
-    // const ctx = canvas.getContext('2d');
-    // const image = ctx.getImageData(0,0,canvas.width, canvas.height);
-    // blurARGB(image.data, canvas, radius);
-    // dilate(image.data, canvas);
-    // invertColors(image.data);
-    // thresholdFilter(image.data, level);
-    // return image;
+// function preprocessImage(canvas) {
+    // const level = 0.5;
+    const radius = 1;
     const ctx = canvas.getContext('2d');
     const image = ctx.getImageData(0,0,canvas.width, canvas.height);
+    blurARGB(image.data, canvas, radius);
+    dilate(image.data, canvas);
+    // invertColors(image.data);
     thresholdFilter(image.data, level);
     return image;
+    // const ctx = canvas.getContext('2d');
+    // const image = ctx.getImageData(0,0,canvas.width, canvas.height);
+    // thresholdFilter(image.data, level);
+    // return image;
 }
 let blurRadius;
 let blurKernelSize;
@@ -23,15 +24,42 @@ function thresholdFilter(pixels, level) {
     if (level === undefined) {
         level = 0.5;
     }
-    const thresh = Math.floor(level * 255);
+    // const thresh = Math.floor(level * 255);
+    // const thresh = 150;
+    let arrGray = [];
     for (let i = 0; i < pixels.length; i += 4) {
         const red = pixels[i];
         const green = pixels[i + 1];
         const blue = pixels[i + 2];
 
-        const gray = 0.2126 * red + 0.7152 * green + 0.0722 * blue;
+        const gray = 0.299 * red + 0.587 * green + 0.114 * blue;
+
+        // const gray = 0.299 * red + 0.587 * green + 0.114 * blue; //-- usefull
+
+        // const gray = 0.2126 * red + 0.7152 * green + 0.0722 * blue;
+        arrGray.push(gray);
+    }
+    let newThresh;
+    let graySum = 0;
+    for (let i = 0; i < arrGray.length; i++) {
+        graySum += arrGray[i];
+        if(i === arrGray.length-1){
+        console.log(graySum);
+        }
+        }
+    newThresh = graySum/arrGray.length;
+    console.log(newThresh);
+
+    for (let i = 0; i < pixels.length; i += 4) {
+        const red = pixels[i];
+        const green = pixels[i + 1];
+        const blue = pixels[i + 2];
+
+        const gray = 0.299 * red + 0.587 * green + 0.114 * blue;
+        // const gray = 0.2126 * red + 0.7152 * green + 0.0722 * blue;
+        arrGray.push(gray);
         let value;
-        if (gray >= thresh) {
+        if (gray >= newThresh) {
             value = 255;
         } else {
             value = 0;
