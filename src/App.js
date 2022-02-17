@@ -11,7 +11,12 @@ const BASE_URL = "https://telegram-bot-lvtech9000.herokuapp.com"
 let socket;
 
 function App() {
+    // const msgArr = [];
+
     const [text, setText] = useState('');
+    const [userName, setUserName] = useState('');
+    const [msgArr, setMsgArr] = useState([]);
+
     useEffect( () =>{     socket = io('https://telegram-bot-lvtech9000.herokuapp.com',
         {transports: ['polling']}
     );
@@ -30,21 +35,40 @@ function App() {
 
             engine.on("packet", ({ type, data }) => {
                 // called for each packet received
+                // console.log('packet');
+
             });
 
             engine.on("packetCreate", ({ type, data }) => {
                 // called for each packet sent
+                // console.log('packetCreate');
+
             });
 
             engine.on("drain", () => {
                 // called when the write buffer is drained
+                // console.log('drain');
+
             });
 
             engine.on("close", (reason) => {
                 // called when the underlying connection is closed
+                console.log('close');
             });
             engine.on("data", (data) => {
                 console.log(data);
+                let croppedData = data.substring(1);
+                console.log(croppedData);
+                croppedData = JSON.parse(croppedData);
+                console.log(croppedData);
+                const payload = croppedData[1];
+                console.log(payload);
+                const {userName:userNameSender, msg} = payload;
+                console.log(userNameSender, msg);
+                msgArr.push(payload);
+                console.log(msgArr)
+                setMsgArr([...msgArr])
+                // setMsgArr([...msgArr,{userName:userNameSender, msg:msg}])
             });
         });
     },[]);
@@ -87,16 +111,30 @@ function App() {
 
 
 const sendMessage = () =>{
-        socket.emit('data', {msg: text});
+    if(userName && text) {
+        socket.emit('data', {userName: userName, msg: text});
         setText('');
-
     }
+}
 
 
   return (
     <div className="App">
         <CameraTextRecogniserSmall/>
-        <input type={"text"} onChange={(event)=>setText(event.target.value)} value={text}/>
+        <div>
+            {msgArr.map((payload,index) => <p key={index}>msg: {payload.userName}  //  {payload.msg}</p>)}
+        </div>
+        <input
+            type={"text"}
+            onChange={({target:{value}})=>setUserName(value)}
+            placeholder={'UserName'}
+            value={userName}
+        />
+        <input
+            type={"text"}
+            onChange={({target:{value}})=>setText(value)}
+            placeholder={'Type your message here'}
+            value={text}/>
         <button onClick={()=>sendMessage()}>Send</button>
     </div>
   );
